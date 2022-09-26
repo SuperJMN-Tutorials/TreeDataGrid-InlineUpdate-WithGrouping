@@ -20,24 +20,23 @@ public class MainWindowViewModel : ViewModelBase
         var f = new Faker("es");
 
         var changes = Observable
-            .Interval(TimeSpan.FromSeconds(2), RxApp.MainThreadScheduler)
-            .Select(_ => new Model(f.Random.Int(0, 10), f.PickRandom("Privado", "Público"), f.PickRandom("amarillo", "rojo", "verde", "negro", "azul")))
+            .Interval(TimeSpan.FromSeconds(1), RxApp.MainThreadScheduler)
+            .Select(_ => new Model(f.Random.Int(0, 10), f.PickRandom("Chilling", "Doing nothing", "Sleeping", "Eating", "Living la vida loca"), f.PickRandom("Living room", "Lounge", "Swimming pool", "Room", "Disco")))
             .ToObservableChangeSet(x => x.Id)
-            .TransformWithInlineUpdate(x => new TreeNode(new ViewModel(x)), (node, model) => {
+            .TransformWithInlineUpdate(x => new TreeNode(new ViewModel(x)), (node, model) =>
+            {
                 if (node.Value is ViewModel v)
                 {
                     v.Model = model;
-                } });
+                }
+            });
 
         var groupedChanges = changes
-            .Group(x => ((ViewModel)x.Value).Model.Group)
-            .Transform(x => new TreeNode(new Group(x.Key, x.Cache.Connect()), o => ((Group)o).Children));
+            .Group(x => ((ViewModel) x.Value).Model.Group)
+            .Transform(x => new TreeNode(new Group(x.Key, x.Cache.Connect()), o => ((Group) o).Children));
 
         changes
-            .Do(x =>
-            {
-                x.ToList().ForEach(y => Debug.WriteLine(y));
-            })
+            .Do(x => { x.ToList().ForEach(y => Debug.WriteLine(y)); })
             .Subscribe();
 
         groupedChanges
@@ -48,33 +47,31 @@ public class MainWindowViewModel : ViewModelBase
         {
             Columns =
             {
-                new HierarchicalExpanderColumn<TreeNode>(new TemplateColumn<TreeNode>("Group", new FuncDataTemplate<TreeNode>((node, ns) => Create(node))), x => x.Children, x => x.Children.Any(), x => x.IsExpanded),
-                new TextColumn<TreeNode, string>("Id", model => model.Try<ViewModel, string>(x => x.Model.Id.ToString()) ?? ""),
-                new TextColumn<TreeNode, string>("Color",  model => model.Try<ViewModel, string>(x => x.Model.Color.ToString()) ?? ""),
-            },
+                new HierarchicalExpanderColumn<TreeNode>(new TemplateColumn<TreeNode>("Location", new FuncDataTemplate<TreeNode>((node, ns) => Create(node))), x => x.Children, x => x.Children.Any(), x => x.IsExpanded),
+                new TextColumn<TreeNode, string>("Person", model => model.Try<ViewModel, string>(x => x.Model.Id.ToString()) ?? ""),
+                new TextColumn<TreeNode, string>("Action", model => model.Try<ViewModel, string>(x => x.Model.Color.ToString()) ?? "")
+            }
         };
-
-        Source.RowSelection!.SingleSelect = true;
     }
+
+    public HierarchicalTreeDataGridSource<TreeNode> Source { get; }
 
     private static Control Create(TreeNode node)
     {
-        if (node is { Value: Group g})
+        if (node is {Value: Group g})
         {
             return new TextBlock {Text = g.Name};
         }
 
-        if (node is { Value: ViewModel vm})
+        if (node is {Value: ViewModel vm})
         {
             return new CheckBox
             {
                 [!ToggleButton.IsCheckedProperty] = new Binding("IsSelected"),
-                DataContext = vm,
+                DataContext = vm
             };
         }
 
-        return new TextBlock(){ Text = "Nope"};
+        return new TextBlock();
     }
-
-    public HierarchicalTreeDataGridSource<TreeNode> Source { get; }
 }
