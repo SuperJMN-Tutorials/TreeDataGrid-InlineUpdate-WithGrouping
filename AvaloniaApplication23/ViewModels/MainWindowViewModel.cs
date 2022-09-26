@@ -35,9 +35,7 @@ public class MainWindowViewModel : ViewModelBase
             .Group(x => ((ViewModel) x.Value).Model.Group)
             .Transform(x => new TreeNode(new Group(x.Key, x.Cache.Connect()), o => ((Group) o).Children));
 
-        changes
-            .Do(x => { x.ToList().ForEach(y => Debug.WriteLine(y)); })
-            .Subscribe();
+        Log(changes);
 
         groupedChanges
             .Bind(out var items)
@@ -52,6 +50,13 @@ public class MainWindowViewModel : ViewModelBase
                 new TextColumn<TreeNode, string>("Action", model => model.Try<ViewModel, string>(x => x.Model.Color.ToString()) ?? "")
             }
         };
+    }
+
+    private static void Log(IObservable<IChangeSet<TreeNode, int>> changes)
+    {
+        changes
+            .Do(x => x.ToList().ForEach(y => Debug.WriteLine(y)))
+            .Subscribe();
     }
 
     public HierarchicalTreeDataGridSource<TreeNode> Source { get; }
