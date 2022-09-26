@@ -1,5 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
@@ -11,7 +10,6 @@ using Avalonia.Data;
 using Bogus;
 using DynamicData;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 
 namespace AvaloniaApplication23.ViewModels;
 
@@ -23,7 +21,7 @@ public class MainWindowViewModel : ViewModelBase
 
         var changes = Observable
             .Interval(TimeSpan.FromSeconds(2), RxApp.MainThreadScheduler)
-            .Select(_ => new Model(f.Random.Int(0, 1), f.PickRandom("Privado", "Público"), f.PickRandom("amarillo", "rojo", "verde", "negro", "azul")))
+            .Select(_ => new Model(f.Random.Int(0, 10), f.PickRandom("Privado", "Público"), f.PickRandom("amarillo", "rojo", "verde", "negro", "azul")))
             .ToObservableChangeSet(x => x.Id)
             .TransformWithInlineUpdate(x => new TreeNode(new ViewModel(x)), (node, model) => {
                 if (node.Value is ViewModel v)
@@ -79,101 +77,4 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     public HierarchicalTreeDataGridSource<TreeNode> Source { get; }
-}
-
-public static class TreeNodeMixin
-{
-    public static TRet? Try<T, TRet>(this TreeNode node, Func<T, TRet> action)
-    {
-        if (node.Value is T value)
-        {
-            return action(value);
-        }
-
-        return default;
-    }
-
-    public static void With<T>(this TreeNode a, TreeNode another, Action<T, T> action)
-    {
-        if (a.Value is T va && another.Value is T vb)
-        {
-            action(va, vb);
-        }
-    }
-}
-
-public class TreeNode
-{
-    private readonly Func<object, ReadOnlyObservableCollection<TreeNode>> getChildren;
-    public object Value { get; }
-    public ReadOnlyObservableCollection<TreeNode> Children => getChildren(Value);
-    public bool IsExpanded { get; set; } = true;
-    public TreeNode(object value) : this(value, _ => new ReadOnlyObservableCollection<TreeNode>(new ObservableCollection<TreeNode>()))
-    {
-    }
-
-    public TreeNode(object value, Func<object, ReadOnlyObservableCollection<TreeNode>> getChildren)
-    {
-        this.getChildren = getChildren;
-        Value = value;
-    }
-
-    public override string? ToString()
-    {
-        return Value.ToString();
-    }
-}
-
-public class Group
-{
-    private readonly ReadOnlyObservableCollection<TreeNode> items;
-    public string Name { get; }
-
-    public ReadOnlyObservableCollection<TreeNode> Children => items;
-
-    public Group(string name, IObservable<IChangeSet<TreeNode, int>> changes)
-    {
-        Name = name;
-
-        changes
-            .Bind(out items)
-            .Subscribe();
-    }
-}
-
-public class ViewModel
-{
-    public ViewModel(Model model)
-    {
-        Model = model;
-    }
-
-    public Model Model { get; set; }
-
-    [Reactive]
-    public bool IsSelected { get; set; }
-
-    public override string ToString()
-    {
-        return $"{nameof(Model)}: {Model}, {nameof(IsSelected)}: {IsSelected}";
-    }
-}
-
-public class Model : ViewModelBase
-{
-    public int Id { get; }
-    public string Color { get; }
-    public string Group { get; }
-
-    public Model(int id, string color, string group)
-    {
-        Id = id;
-        Color = color;
-        Group = group;
-    }
-
-    public override string ToString()
-    {
-        return $"{nameof(Id)}: {Id}, {nameof(Color)}: {Color}, {nameof(Group)}: {Group}";
-    }
 }
