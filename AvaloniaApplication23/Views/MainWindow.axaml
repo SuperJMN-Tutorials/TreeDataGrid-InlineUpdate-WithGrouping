@@ -1,0 +1,87 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AvaloniaApplication23.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:conv="clr-namespace:Avalonia.Controls.Converters;assembly=Avalonia.Controls.TreeDataGrid"
+        xmlns:avaloniaApplication23="clr-namespace:AvaloniaApplication23"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApplication23.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="AvaloniaApplication23">
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
+	<Window.Resources>
+		<StreamGeometry x:Key="TreeViewItemCollapsedChevronPathData">M 1,0 10,10 l -9,10 -1,-1 L 8,10 -0,1 Z</StreamGeometry>
+		<StreamGeometry x:Key="TreeViewItemExpandedChevronPathData">M0,1 L10,10 20,1 19,0 10,8 1,0 Z</StreamGeometry>
+        <avaloniaApplication23:DebugConverter x:Key="DebugConverter" />
+    </Window.Resources>
+
+	<Window.Styles>
+
+		<!--<Style Selector="ToggleButton.ExpandCollapseChevron /template/ Path#ChevronPath">
+			<Setter Property="Data" Value="{StaticResource TreeViewItemCollapsedChevronPathData}" />
+		</Style>
+		<Style Selector="ToggleButton.ExpandCollapseChevron:checked /template/ Path#ChevronPath">
+			<Setter Property="Data" Value="{StaticResource TreeViewItemExpandedChevronPathData}" />
+		</Style>
+
+		<Style Selector="TreeDataGridExpanderCell">
+            <Setter Property="Template">
+				<ControlTemplate>
+					<Border x:Name="CellBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Indent, Converter={x:Static conv:IndentConverter.Instance}}">
+						<DockPanel>
+							<Border DockPanel.Dock="Left"
+                                    Margin="4 0"
+                                    Width="12" Height="12">
+								<ToggleButton Focusable="False"
+                                              Classes="ExpandCollapseChevron"
+                                              IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}"
+                                              IsVisible="{TemplateBinding ShowExpander}"/>
+							</Border>
+                            <Decorator Name="PART_Content" />
+						</DockPanel>
+					</Border>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+
+		<Style Selector="TreeDataGrid /template/ Border#CellBorder">
+            <Setter Property="Padding" Value="0" />
+        </Style>
+
+        <Style Selector="TreeDataGridRow">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border x:Name="RowBorder"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <Border.Background>
+                            <MultiBinding Converter="{x:Static avaloniaApplication23:IntentToColorConverter.Instance}">
+                                <Binding Path="." />
+                                <Binding Path="Rows" RelativeSource="{RelativeSource TemplatedParent}" />
+                            </MultiBinding>
+                        </Border.Background>
+                        <TreeDataGridCellsPresenter Name="PART_CellsPresenter"
+                                                    ElementFactory="{TemplateBinding ElementFactory}"
+                                                    Items="{TemplateBinding Columns}"
+                                                    Rows="{TemplateBinding Rows}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>-->
+
+	</Window.Styles>
+
+	<TreeDataGrid Source="{Binding Source}" />
+
+</Window>
