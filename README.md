@@ -7,7 +7,7 @@ Shows how to transform an `Observable` to a changeset that can be grouped. Also,
 Uses 
 - [DynamicData](https://github.com/reactivemarbles/DynamicData)
 - [Avalonia](https://github.com/AvaloniaUI/Avalonia)
-- [ReactiveUI] https://www.reactiveui.net
+- [ReactiveUI](https://www.reactiveui.net)
 
 https://user-images.githubusercontent.com/3109851/192312747-03aec620-bbe4-4c7d-a886-a11dc6584a00.mp
 
