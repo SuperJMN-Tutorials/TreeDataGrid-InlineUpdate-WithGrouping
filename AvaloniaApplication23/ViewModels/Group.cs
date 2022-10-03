@@ -6,12 +6,9 @@ namespace AvaloniaApplication23.ViewModels;
 
 public class Group
 {
-    private readonly ReadOnlyObservableCollection<TreeNode> items;
-    public string Name { get; }
+    private readonly ReadOnlyObservableCollection<ViewModel> items;
 
-    public ReadOnlyObservableCollection<TreeNode> Children => items;
-
-    public Group(string name, IObservable<IChangeSet<TreeNode, int>> changes)
+    public Group(string name, IObservable<IChangeSet<ViewModel, int>> changes)
     {
         Name = name;
 
@@ -19,4 +16,8 @@ public class Group
             .Bind(out items)
             .Subscribe();
     }
+
+    public string Name { get; }
+
+    public ReadOnlyObservableCollection<ViewModel> Children => items;
 }
